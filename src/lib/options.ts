@@ -27,11 +27,12 @@ export const gradientDefault: Gradient = {
     ],
 };
 
+export const defaultQRData = '00020101021238540010A00000072701240006970422011003375418780208QRIBFTTA53037045405200005802VN62190815Donate cho Linh6304363A';
+
 export const defaultQRCodeOptions: Options = {
     width: 300,
     height: 300,
     type: 'svg' as DrawType,
-    data: 'http://qr-code-styling.com',
     margin: 10,
     qrOptions: {
         typeNumber: 0 as TypeNumber,
