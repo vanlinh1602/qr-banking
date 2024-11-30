@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { defaultQRData, dotsStyles, gradientDefault } from '@/lib/options';
-import { configTutorial } from '@/lib/tutorial';
+import { startTutorial } from '@/lib/tutorial';
 import { convertImgaesToBase64 } from '@/lib/utils';
 
 import { Button } from '../ui/button';
@@ -89,7 +89,7 @@ export const QRCodeConfig = ({
             <HelpCircle
               className="w-5 h-5 text-primary ml-2"
               onClick={() => {
-                configTutorial.drive();
+                startTutorial('config').drive();
               }}
             />
           </DialogTitle>

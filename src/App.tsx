@@ -21,7 +21,7 @@ import QRCodeConfig from './components/QRConfig';
 import SearchableSelect from './components/SearchableSelect';
 import Waiting from './components/Waiting';
 import { defaultQRCodeOptions, defaultQRData } from './lib/options';
-import { QRTutorial } from './lib/tutorial';
+import { startTutorial } from './lib/tutorial';
 import { BankingService } from './services/banking';
 import { BankAPI } from './type';
 
@@ -140,7 +140,7 @@ export default function BankingQRGenerator() {
             <CircleHelp
               className="text-primary"
               onClick={() => {
-                QRTutorial.drive();
+                startTutorial('qr').drive();
               }}
             />
           </div>

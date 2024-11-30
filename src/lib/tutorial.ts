@@ -2,7 +2,7 @@ import 'driver.js/dist/driver.css';
 
 import { driver } from 'driver.js';
 
-export const QRTutorial = driver({
+const QRTutorial = {
     showProgress: true,
     steps: [
         { element: '#banking-select', popover: { title: 'Ngân Hàng', description: 'Chọn ngân hàng mà bạn muốn tạo mã chuyển khoản', side: 'left', align: 'start' } },
@@ -14,9 +14,9 @@ export const QRTutorial = driver({
         { element: '#submit-button', popover: { title: 'Tạo QR', description: 'Cuối cùng bấm vào đây để tạo QR', side: 'top', align: 'start' } },
         { element: '#qr-generated', popover: { title: 'Mã QR', description: 'Mã QR được tạo ra sẽ hiển thị tại đây. Bạn có thể nhấn button bên dưới để tải về', side: 'left', align: 'start' } },
     ]
-});
+};
 
-export const configTutorial = driver({
+const configTutorial = {
     showProgress: true,
     steps: [
         { element: '#tab-logo', popover: { title: 'Logo', description: 'Bạn có thể thêm logo của mình vào QR', side: 'bottom', align: 'start' } },
@@ -27,4 +27,14 @@ export const configTutorial = driver({
         { element: '#save-config', popover: { title: 'Lưu', description: 'Cuối cùng nhấn vào đây để lưu lại cấu hình của bạn', side: 'bottom', align: 'start' } },
 
     ]
-});
+};
+
+type TutorialTour = 'qr' | 'config';
+
+export function startTutorial(tour: TutorialTour) {
+    if (tour === 'qr') {
+        return driver(QRTutorial as any);
+    } else {
+        return driver(configTutorial as any);
+    }
+}
