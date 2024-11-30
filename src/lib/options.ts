@@ -22,8 +22,8 @@ export const dotsStyles = {
 export const gradientDefault: Gradient = {
     type: 'linear',
     colorStops: [
-        { offset: 0, color: '#5248a3' },
-        { offset: 1, color: '#6f2051' },
+        { offset: 0, color: '#F0A8A8' },
+        { offset: 1, color: '#EB477E' },
     ],
 };
 

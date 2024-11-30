@@ -1,6 +1,6 @@
 'use client';
 
-import { CloudUpload } from 'lucide-react';
+import { CloudUpload, HelpCircle } from 'lucide-react';
 import QRCodeStyling, {
   CornerDotType,
   CornerSquareType,
@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { defaultQRData, dotsStyles, gradientDefault } from '@/lib/options';
+import { configTutorial } from '@/lib/tutorial';
 import { convertImgaesToBase64 } from '@/lib/utils';
 
 import { Button } from '../ui/button';
@@ -48,8 +49,8 @@ export const QRCodeConfig = ({
   const [handling, setHandling] = useState(false);
   const [options, setOptions] = useState<Options>({
     ...defaultOptions,
-    width: 200,
-    height: 200,
+    width: 250,
+    height: 250,
   });
   const [qrCode] = useState<QRCodeStyling>(
     new QRCodeStyling({
@@ -86,18 +87,34 @@ export const QRCodeConfig = ({
       {handling ? <Waiting /> : null}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>QR Code Settings</DialogTitle>
+          <DialogTitle className="flex justify-center">
+            Cấu hình QR
+            <HelpCircle
+              className="w-5 h-5 text-primary ml-2"
+              onClick={() => {
+                configTutorial.drive();
+              }}
+            />
+          </DialogTitle>
           <DialogDescription>
-            Customize your QR code and preview it in real-time.
+            Cấu hình các thông số cho mã QR của bạn
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <Tabs defaultValue="logo" className="w-full">
             <TabsList>
-              <TabsTrigger value="logo">Logo</TabsTrigger>
-              <TabsTrigger value="dots">Dots</TabsTrigger>
-              <TabsTrigger value="corner-square">Corners Square</TabsTrigger>
-              <TabsTrigger value="corner-dot">Corners Dot</TabsTrigger>
+              <TabsTrigger id="tab-logo" value="logo">
+                Logo
+              </TabsTrigger>
+              <TabsTrigger id="tab-dots" value="dots">
+                Dots
+              </TabsTrigger>
+              <TabsTrigger id="tab-corner-square" value="corner-square">
+                Corners Square
+              </TabsTrigger>
+              <TabsTrigger id="tab-corner-dot" value="corner-dot">
+                Corners Dot
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="logo" className="w-full">
               {options.image ? (
@@ -108,10 +125,10 @@ export const QRCodeConfig = ({
                     className="h-20 object-cover"
                   />
                   <Button
-                    variant="destructive"
+                    variant="secondary"
                     onClick={() => setOptions({ ...options, image: '' })}
                   >
-                    Remove
+                    Xóa
                   </Button>
                 </div>
               ) : (
@@ -750,6 +767,7 @@ export const QRCodeConfig = ({
             Đây là bản xem trước
           </span>
           <Button
+            id="save-config"
             onClick={() => {
               const data = { ...options };
               delete data.width;
@@ -757,7 +775,7 @@ export const QRCodeConfig = ({
               onSave(data);
             }}
           >
-            Save
+            Lưu
           </Button>
         </div>
       </DialogContent>
