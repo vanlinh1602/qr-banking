@@ -7,7 +7,7 @@ import QRCodeStyling, {
   DotType,
   Options,
 } from 'qr-code-styling';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
   Dialog,
@@ -59,21 +59,18 @@ export const QRCodeConfig = ({
   );
 
   const templateRef = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => {
-    if (!templateRef.current) return;
-    qrCode.append(templateRef.current);
-    return () => {};
-  }, [qrCode]);
 
   useEffect(() => {
-    if (!templateRef.current) return;
-    qrCode.append(templateRef.current);
+    if (templateRef.current) {
+      qrCode.append(templateRef.current);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [qrCode, templateRef.current]);
 
   useEffect(() => {
     qrCode.update(options);
-  }, [qrCode, options]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [options]);
 
   return (
     <Dialog
