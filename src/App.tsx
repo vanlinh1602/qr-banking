@@ -93,16 +93,6 @@ export default function BankingQRGenerator() {
 
   const handleGenerateQR = () => {
     try {
-      if (!bankDetails.bank) {
-        toast.error('Vui lòng chọn ngân hàng');
-        return;
-      }
-
-      if (!bankDetails.accountNumber) {
-        toast.error('Vui lòng nhập số tài khoản');
-        return;
-      }
-
       const service = new BankingService({ ...bankDetails });
       const qrData = service.generateCode();
 
@@ -260,7 +250,21 @@ export default function BankingQRGenerator() {
             onClick={() => setOpenConfig(true)}
           />
 
-          <ButtonHover3 id="submit-button" onClick={() => setOpenConfirm(true)}>
+          <ButtonHover3
+            id="submit-button"
+            onClick={() => {
+              if (!bankDetails.bank) {
+                toast.error('Vui lòng chọn ngân hàng');
+                return;
+              }
+
+              if (!bankDetails.accountNumber) {
+                toast.error('Vui lòng nhập số tài khoản');
+                return;
+              }
+              setOpenConfirm(true);
+            }}
+          >
             Tạo QR
           </ButtonHover3>
         </CardFooter>
