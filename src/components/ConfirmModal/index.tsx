@@ -52,7 +52,7 @@ export function ConfirmModal({
             <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <div className="flex flex-row justify-between w-full">
+            <div className="flex flex-row justify-between w-full items-center">
               <div className="flex items-center space-x-2 justify-start">
                 <Checkbox
                   id="remind"
@@ -68,9 +68,11 @@ export function ConfirmModal({
                   Không hiển thị lại
                 </label>
               </div>
-            </div>
 
-            <Button onClick={handleConfirm}>Xác nhận</Button>
+              <Button className="flex" onClick={handleConfirm}>
+                Xác nhận
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>

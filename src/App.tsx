@@ -23,6 +23,7 @@ import SearchableSelect from './components/SearchableSelect';
 import Waiting from './components/Waiting';
 import { defaultQRCodeOptions, defaultQRData } from './lib/options';
 import { startTutorial } from './lib/tutorial';
+import { formatNumber } from './lib/utils';
 import { BankingService } from './services/banking';
 import { BankAPI } from './type';
 
@@ -112,6 +113,9 @@ export default function BankingQRGenerator() {
         options,
       };
       localStorage.setItem('user-config', JSON.stringify(storedData));
+      document
+        .getElementById('qr-generated')
+        ?.scrollIntoView({ behavior: 'smooth' });
     } catch (error: any) {
       toast.error(`Lỗi: ${error.message}`);
     }
@@ -212,9 +216,7 @@ export default function BankingQRGenerator() {
                   onChange={(e) => {
                     const value = e.target.value.replace(/\D/g, '');
                     if (value) {
-                      const formattedValue = new Intl.NumberFormat().format(
-                        Number(value)
-                      );
+                      const formattedValue = formatNumber(value);
                       setBankDetails({
                         ...bankDetails,
                         amount: formattedValue,
@@ -310,7 +312,11 @@ export default function BankingQRGenerator() {
                   ) : null}
                 </div>
               </div>
-            ) : null}
+            ) : (
+              <div className="flex items-center justify-center">
+                <span>Đây là QR mẫu, vui lòng tạo QR để xem kết quả</span>
+              </div>
+            )}
           </div>
           <div>
             <ButtonHover3
