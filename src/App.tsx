@@ -264,6 +264,15 @@ export default function BankingQRGenerator() {
                 toast.error('Vui lòng nhập số tài khoản');
                 return;
               }
+
+              if (
+                bankDetails.content &&
+                /[!@#$%^&*(),.?":{}|<>]/.test(bankDetails.content)
+              ) {
+                toast.error('Nội dung không được chứa kí tự đặc biệt');
+                return;
+              }
+
               setOpenConfirm(true);
             }}
           >
