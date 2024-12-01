@@ -245,7 +245,7 @@ export default function BankingQRGenerator() {
                 <Input
                   id="content"
                   name="content"
-                  placeholder="Donate cho Linh"
+                  placeholder="Buy me a coffee"
                   onChange={handleInputChange}
                   value={bankDetails.content}
                 />

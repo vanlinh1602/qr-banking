@@ -1,7 +1,6 @@
 import { ChevronsUpDown } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { Button } from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -15,6 +14,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+
+import { Button } from '../ui/button';
 
 type Props = {
   options: { value: string; label: string; icon?: string }[];
@@ -54,15 +55,15 @@ export default function SearchableSelect({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild disabled={disabled} className={className}>
+      <PopoverTrigger asChild disabled={disabled} className={`${className}`}>
         <Button
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between font-normal"
+          className="flex justify-between font-normal items-center w-full"
         >
           {selectValue ? (
-            <div className="flex items-center">
+            <div className="flex w-full">
               {selectValue.icon && (
                 <img
                   src={selectValue.icon}
@@ -70,12 +71,14 @@ export default function SearchableSelect({
                   className="h-5"
                 />
               )}
-              {selectValue.label}
+              <span className="text-ellipsis whitespace-nowrap overflow-hidden">
+                {selectValue.label}
+              </span>
             </div>
           ) : (
             <div className="flex opacity-50">{placeholder}</div>
           )}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50 md:ml-0 ml-[-10px]" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0 w-[300px] md:w-[500px]">
