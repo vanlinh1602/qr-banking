@@ -19,8 +19,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { defaultQRData, dotsStyles, gradientDefault } from '@/lib/options';
 import { startTutorial } from '@/lib/tutorial';
-import { convertImgaesToBase64 } from '@/lib/utils';
 
+import { CropImage } from '../CropImage';
 import { Button } from '../ui/button';
 import { FileInput, FileUploader } from '../ui/file-input';
 import { Input } from '../ui/input';
@@ -47,6 +47,7 @@ export const QRCodeConfig = ({
   options: defaultOptions,
 }: Props) => {
   const [handling, setHandling] = useState(false);
+  const [cropImage, setCropImage] = useState<File>();
   const [options, setOptions] = useState<Options>({
     ...defaultOptions,
     width: 250,
@@ -82,6 +83,16 @@ export const QRCodeConfig = ({
       }}
     >
       {handling ? <Waiting /> : null}
+      {cropImage ? (
+        <CropImage
+          imageFile={cropImage}
+          onClose={() => setCropImage(undefined)}
+          onSave={(croppedImageUrl) => {
+            setOptions({ ...options, image: croppedImageUrl });
+            setCropImage(undefined);
+          }}
+        />
+      ) : null}
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="flex justify-center">
@@ -136,8 +147,9 @@ export const QRCodeConfig = ({
                       setHandling(true);
                       if (!value) return;
                       const file = value[0];
-                      const image = await convertImgaesToBase64(file);
-                      setOptions({ ...options, image });
+                      // const image = await convertImgaesToBase64(file);
+                      // setOptions({ ...options, image });
+                      setCropImage(file);
                     } finally {
                       setHandling(false);
                     }

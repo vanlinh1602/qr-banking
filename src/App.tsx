@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import banks from '@/lib/banks.json';
 
+import { ConfirmModal } from './components/ConfirmModal';
 import QRCodeConfig from './components/QRConfig';
 import SearchableSelect from './components/SearchableSelect';
 import Waiting from './components/Waiting';
@@ -52,6 +53,7 @@ export default function BankingQRGenerator() {
   });
   const [options, setOptions] = useState<Options>(defaultQRCodeOptions);
   const [qrCreated, setQRCreated] = useState<QRCreated>();
+  const [openConfirm, setOpenConfirm] = useState(false);
 
   const [qrCode] = useState<QRCodeStyling>(
     new QRCodeStyling({
@@ -66,9 +68,11 @@ export default function BankingQRGenerator() {
   const qrGenerated = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const opt = localStorage.getItem('qr-options');
-    if (opt) {
-      setOptions(JSON.parse(opt));
+    const cfg = localStorage.getItem('user-config');
+    if (cfg) {
+      const config = JSON.parse(cfg);
+      setOptions(config.options);
+      setBankDetails((pre) => ({ ...pre, ...config.info }));
     }
   }, []);
 
@@ -87,8 +91,7 @@ export default function BankingQRGenerator() {
     setBankDetails({ ...bankDetails, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleGenerateQR = () => {
     try {
       if (!bankDetails.bank) {
         toast.error('Vui lòng chọn ngân hàng');
@@ -110,14 +113,35 @@ export default function BankingQRGenerator() {
         ...bankDetails,
         bank: banks.find((b) => b.bin === bankDetails.bank) as BankAPI,
       });
-    } finally {
-      localStorage.setItem('qr-options', JSON.stringify(options));
+      const storedData = {
+        info: {
+          bank: bankDetails.bank,
+          accountNumber: bankDetails.accountNumber,
+          accountHolder: bankDetails.accountHolder,
+        },
+        options,
+      };
+      localStorage.setItem('user-config', JSON.stringify(storedData));
+    } catch (error: any) {
+      toast.error(`Lỗi: ${error.message}`);
     }
   };
 
   return (
     <div className="w-svw p-4 flex flex-col md:flex-row md:space-x-4 md:items-center">
       {handling ? <Waiting /> : null}
+      {openConfirm ? (
+        <ConfirmModal
+          id="confirm-qr"
+          title="Xác nhận"
+          description="Bạn vui lòng kiểm tra kĩ thông tin số tài khoản. Nếu có sai sót về số tài khoản, mã QR sẽ không thể chuyển khoản hoặc sẽ chuyển khoản sai. Bạn có chắc chắn muốn tiếp tục?"
+          onConfirm={() => {
+            handleGenerateQR();
+            setOpenConfirm(false);
+          }}
+          onCancel={() => setOpenConfirm(false)}
+        />
+      ) : null}
       {openConfig ? (
         <QRCodeConfig
           onCancel={() => setOpenConfig(false)}
@@ -171,6 +195,7 @@ export default function BankingQRGenerator() {
                 <Input
                   id="accountNumber"
                   name="accountNumber"
+                  value={bankDetails.accountNumber}
                   placeholder="0337541878"
                   onChange={handleInputChange}
                   required
@@ -182,6 +207,7 @@ export default function BankingQRGenerator() {
                   id="accountHolder"
                   name="accountHolder"
                   placeholder="NGUYEN VAN LINH"
+                  value={bankDetails.accountHolder}
                   onChange={handleInputChange}
                   required
                 />
@@ -221,6 +247,7 @@ export default function BankingQRGenerator() {
                   name="content"
                   placeholder="Donate cho Linh"
                   onChange={handleInputChange}
+                  value={bankDetails.content}
                 />
               </div>
             </div>
@@ -233,7 +260,7 @@ export default function BankingQRGenerator() {
             onClick={() => setOpenConfig(true)}
           />
 
-          <ButtonHover3 id="submit-button" onClick={handleSubmit}>
+          <ButtonHover3 id="submit-button" onClick={() => setOpenConfirm(true)}>
             Tạo QR
           </ButtonHover3>
         </CardFooter>
@@ -285,19 +312,23 @@ export default function BankingQRGenerator() {
             <ButtonHover3
               className="mt-4"
               onClick={async (e) => {
-                setHandling(true);
                 e.stopPropagation();
-                try {
-                  const dataUrl = await htmlToImage.toPng(qrGenerated.current!);
-                  const link = document.createElement('a');
-                  link.download = 'qr-generated.png';
-                  link.href = dataUrl;
-                  link.click();
-                } catch (error: any) {
-                  toast.error(`Lỗi: ${error.message}`);
-                } finally {
-                  setHandling(false);
-                }
+                setHandling(true);
+                setTimeout(async () => {
+                  try {
+                    const dataUrl = await htmlToImage.toPng(
+                      qrGenerated.current!
+                    );
+                    const link = document.createElement('a');
+                    link.download = 'qr-generated.png';
+                    link.href = dataUrl;
+                    link.click();
+                  } catch (error: any) {
+                    toast.error(`Lỗi: ${error.message}`);
+                  } finally {
+                    setHandling(false);
+                  }
+                }, 0);
               }}
             >
               <Download className="mr-2 h-5 w-5" />
