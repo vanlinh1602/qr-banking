@@ -23,7 +23,7 @@ import SearchableSelect from './components/SearchableSelect';
 import Waiting from './components/Waiting';
 import { defaultQRCodeOptions, defaultQRData } from './lib/options';
 import { startTutorial } from './lib/tutorial';
-import { formatNumber } from './lib/utils';
+import { formatNumber, removeAccents } from './lib/utils';
 import { BankingService } from './services/banking';
 import { BankAPI } from './type';
 
@@ -70,10 +70,15 @@ export default function BankingQRGenerator() {
 
   useEffect(() => {
     const cfg = localStorage.getItem('user-config');
+    const showTutorial = localStorage.getItem('show-tutorial');
     if (cfg) {
       const config = JSON.parse(cfg);
       setOptions(config.options);
       setBankDetails((pre) => ({ ...pre, ...config.info }));
+    }
+    if (!showTutorial) {
+      startTutorial('qr').drive();
+      localStorage.setItem('show-tutorial', 'true');
     }
   }, []);
 
@@ -89,7 +94,15 @@ export default function BankingQRGenerator() {
   }, [qrCode, options]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setBankDetails({ ...bankDetails, [e.target.name]: e.target.value });
+    let value = e.target.value;
+    if (e.target.name === 'content') {
+      value = removeAccents(value);
+      if (value.length > 80) {
+        toast.error('Nội dung không được vượt quá 80 kí tự');
+        return;
+      }
+    }
+    setBankDetails({ ...bankDetails, [e.target.name]: value });
   };
 
   const handleGenerateQR = () => {
@@ -290,7 +303,7 @@ export default function BankingQRGenerator() {
           <div
             id="qr-generated"
             ref={qrGenerated}
-            className="bg-white p-5 text-xs rounded-lg"
+            className="bg-white p-2 pb-3 text-xs rounded-lg"
           >
             <div id="qr-code" ref={ref} />
             {qrCreated ? (
